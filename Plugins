@@ -1,0 +1,36 @@
+Jenkins Plugins :-
+
+
+1. Amazon EC2
+2. Amazon ECR
+3. Amazon ECS/Fargate
+4. Ansicolor
+5. Ant Plugins
+6. Blue Ocean
+7. Build Pipeline 
+8. Build Timeout
+9. Checkstyle 
+10. Clover Plugin
+11. Cobertura Plugin
+12. Copy Aritifact Plugin
+13. Docker Pipeline
+14. EC2 Fleet Jenkins Plugin
+15. Emain extension Plugin
+16. External Monitor job type plugin
+17. generic webhook trigger plugin
+18. git parameter plugin
+19. Github Authentication plugin
+20. Github Pull request builder
+21. Jacoco plugin
+22. LDAP
+23. mail watcher plugin
+24. Monitoring
+25. Pipeline
+26. Pipeline Maven integration plugin
+27. Pipeline : Declarative Agent API
+28. Pipeline:Groovy
+29. Pipeline: Multibranch with defaults
+30. Repository Connector
+31. SSH Server
+32. Timestamper
+33. Workspace cleanup  plugin
