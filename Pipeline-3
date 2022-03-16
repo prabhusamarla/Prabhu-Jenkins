@@ -1,0 +1,84 @@
+pipeline{
+    agent any
+	   environment {
+
+        AWS_ACCOUNT_ID="YOUR_ACCOUNT_ID_HERE"
+        AWS_DEFAULT_REGION="CREATED_AWS_ECR_CONTAINER_REPO_REGION" 
+        IMAGE_REPO_NAME="ECR_REPO_NAME"
+        IMAGE_TAG="IMAGE_TAG"
+        REPOSITORY_URI = 
+		registry = 'cloudtechmasters/springboot-k8s:latest'
+		registryCredentials = 'docker-credentials'
+		dockerImage = ''
+
+    stages { 
+        stage('clone SCM ') { 
+            steps { 
+               git branch: 'main', url:'https://github.com/cloudtechmasters/springboot-tomcat-gradle-war.git'
+            }
+        }
+        stage('Build and sonar analysis') { 
+            steps { 
+               sh 'mvn clean package sonar:sonar'
+            }
+        }
+        
+        stage("sonar quality check"){
+            steps{
+                script{
+                    withSonarQubeEnv(credentialsId: 'sonar-token') {
+                            sh 'mvn sonar: sonar'
+                    }
+
+                    timeout(time: 1, unit: 'HOURS') {
+                      def qg = waitForQualityGate()
+                      if (qg.status != 'OK') {
+                           error "Pipeline aborted due to quality gate failure: ${qg.status}"
+                      }
+                    }
+
+                }  
+            }
+        }
+		Building Docker images
+    stage('Building image') {
+      steps{
+        script {
+          dockerImage = docker.build "${IMAGE_REPO_NAME}:${IMAGE_TAG}"
+        }
+      }
+    }
+   
+    // Uploading Docker images into AWS ECR
+    stage('Pushing to ECR') {
+     steps{  
+         script {
+                sh "docker tag ${IMAGE_REPO_NAME}:${IMAGE_TAG} ${REPOSITORY_URI}:$IMAGE_TAG"
+                sh "docker push ${AWS_ACCOUNT_ID}.dkr.ecr.${AWS_DEFAULT_REGION}.amazonaws.com/${IMAGE_REPO_NAME}:${IMAGE_TAG}"
+                    }
+                }
+            }
+        }
+    }
+}
+
+
+
+    post {
+        //always {
+            // Clean up
+            //sh "docker rmi -f ${aws_ecr_arn}/${project_env}/${module_name}:build-v${BUILD_NUMBER}"        
+      //}
+      failure {
+            //mail to: 'devops@simplifyvms.com',
+            //subject: "Failed Pipeline: ${currentBuild.fullDisplayName}",
+            //body: "Something is wrong with ${env.BUILD_URL}"
+        emailext (
+            to: 'devops; rkejriwal; shivamm@simplifyvms.com',
+            subject: '${DEFAULT_SUBJECT}',
+            body: '${DEFAULT_CONTENT}',
+            recipientProviders: [[$class: 'DevelopersRecipientProvider']]
+            )
+    }
+  }
+}
