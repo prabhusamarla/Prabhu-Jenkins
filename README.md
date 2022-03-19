@@ -5,3 +5,9 @@ This option is availble in Global security
 
 Build with parameters is very poweful option, were we update parameters in script before build starts
 Choice paramters helps to choose options from list and string parameter we need to update the value
+
+
+
+
+
+![image](https://user-images.githubusercontent.com/63093250/159107379-2d75b843-276e-4ab5-86ac-91c817076188.png)
