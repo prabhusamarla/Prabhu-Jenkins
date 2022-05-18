@@ -1,0 +1,35 @@
+pipeline {
+    agent any
+    environment {
+        mainenv = 'Dev'
+		Dockerenv = 'Dev'
+    }
+
+    stages {
+        stage('Git checkout') {
+		   environment {
+		      subenv = 'sublime'
+			}
+			 
+            steps {
+                echo 'Hello World'
+				echo """ Inside stage of Git: subenv = ${subenv}"""
+            }
+        }
+        
+          stage('Build') {
+            steps {
+                echo 'Build stage is done'
+                echo  """ mainenv = ${mainenv}"""
+            }
+        }
+		
+		stage('Docker build') {
+            steps {
+                echo 'Docker image is ready'
+                echo  """ Dockerenv = ${Dockerenv}"""
+            }
+        }
+        
+    }
+}
